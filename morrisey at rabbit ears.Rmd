@@ -1,0 +1,112 @@
+---
+title: "Corrected Data"
+author: "Brian"
+date: "2022-08-23"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Disclaimer 
+
+*This work is very preliminary as I get back into the coding swing of things. Data wrangling and figure generation will be done via R, but the rest of the project will be done using good ol' microsoft products. This is just an entry point into data crunching and should by no means be considered a final product.*
+
+# Notes from SF 12/8
+
+
+Find a station where there is an obvious change using Morrisey, run the time series with what I have, then do it with the Morrisey and compare the two in a figure. Find the equation of the lines, r^2, etc. 
+
+H1 is the Morrisey method, H2 is the Oiler. 
+
+Update your amounts of stations with a buffered layer in ArcGIS. 
+
+Rabbit Ears 709 (Morrisey), Dry Lake 457 (Oiler), Columbine 408 (Morrisey).
+
+# Rabbit Ears SNOTEL
+
+```{r libraries, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(snotelr)
+library(riem)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(dataRetrieval)
+library(lubridate)
+library(sf)
+library(ggthemes)
+library(xts)
+library(dygraphs)
+library(scales)
+library(openair)
+library(plotly)
+library(SciViews)
+knitr::opts_chunk$set(message = F, 
+                      warning = F,
+                      cache = T)
+knitr::opts_chunk$set(echo = TRUE)
+library(trend)
+library(nhdplusTools)
+#library(lfstat) No longer supported?
+library(ggpubr)
+library(kableExtra)
+
+#Stats
+library(forcats)
+library(stringr)
+library(trend)
+
+# COOP/ Did not work- seems to be limited to coastal areas
+#library(rnoaa)
+```
+
+
+```{r filter Rabbit Ears 709 station}
+
+SNOTEL_StudyArea <- read.csv("C:/Users/bsteen/OneDrive - Colostate/Documents/MS_Research/Research_via_campus/data_raw/SNOTEL_StudyArea.csv", header = TRUE)
+
+snotel_709 <- SNOTEL_StudyArea %>% 
+  filter(site_id == "709")
+
+```
+
+Trying to figure out what anomalies are there. 98 Celsius seems hot. 
+Checking against NRCS, these values are in Celsius. 
+
+### Data Cleaning
+
+```{r clean & water year & day }
+head(snotel_709) # check the date, usually a character.  
+
+snotel_709$Date <- as.Date(snotel_709$date) #change date from character to date format, capitalize to work with Water year functon from NWIS.
+
+snotel_709_clean <- snotel_709 %>% # filter for the timeframe
+  filter(Date >= "1986-09-19" & Date <= "2021-09-30") %>%
+  #filter(temperature_mean >= -30 & temperature_mean <= 20) %>% # removing outliers   
+  addWaterYear() %>% 
+  mutate(daymonth = format(as.Date(Date), "%d-%m")) %>% 
+  na.omit()
+
+#adding water day using difftime (SUPER COOL. example from [this](https://stackoverflow.com/questions/48123049/create-day-index-based-on-water-year))
+
+snotel_709_clean <- snotel_709_clean %>% 
+  group_by(waterYear)%>% 
+  mutate(waterDay = (as.integer(difftime(Date, ymd(paste0(waterYear - 1 ,'-09-30')), units = "days"))))
+
+```
+
+```{r plot check }
+
+ggplot(snotel_709_clean, aes(x = Date, y = temperature_mean)) + #this filter didn't work.....
+  geom_point() + #lwd = 2) +
+  theme_few() +
+  geom_smooth(method = "lm", se=FALSE) +
+  ylab('Daily temperature (°C)') + 
+  xlab('Date')
+
+```
+
+Need to figure out the outlier issue. 
