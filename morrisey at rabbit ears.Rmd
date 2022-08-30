@@ -788,3 +788,24 @@ print(sd_sens_408_ad)
 
 ```
 
+
+# Notes from SF 30/8
+
+Write up the methodology as it stands, discuss some of the results as they are. 
+
+Look at when missing days occur and determine if interpolation is possible.
+
+Look at Repass 2005, SF 2006, and Moran et al 2022 draft for interpolation ideas for years with less than 20% missing observations.
+
+Plot the pre-sensor change of Rabbit Ears and Columbine against the post-sensor change.
+
+Insert Theil Sen's slope against linear regression.
+
+Check missing days/years for the Towers site.
+
+Correlate Rabbit Ears and Columbine. See what the R^2 is. 
+
+Look more into Oiler. 
+
+
+
