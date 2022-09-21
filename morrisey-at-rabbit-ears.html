@@ -9339,6 +9339,28 @@ post-sensor change.</p>
 <p>Correlate Rabbit Ears and Columbine. See what the R^2 is.</p>
 <p>Look more into Oiler.</p>
 </div>
+<div id="methodology" class="section level1">
+<h1>Methodology</h1>
+<p>SNOTEL data was provided by the NRCS. Data was cleaned by removing
+outliers that are likely implausible; any year with more than 15
+observations missing was removed. Temperatures were adjusted using the
+Morrisey method for stations identified by Ma et al (2019) due to SNOTEL
+temperature sensor changes, with the adjustment applied to pre-sensor
+change data. Daily mean observations were detrended to determine whether
+values were increasing or decreasing from the entire time series trend.
+Daily mean temperatures were first averaged by water year, with all
+water year means then averaged by day of water year. The mean
+temperature by day for the period of record was averaged. To find the
+standard deviation, the daily mean temperatures by water year was
+subtracted from the averaged mean temperature by day for the period of
+record. All water year means averaged by day of water year were
+subtracted from the temperature mean. The resulting values were then
+added together to find the “residual” of the daily mean temperatures by
+water year. The standard deviation was then computed from those
+residuals, with trends analyzed by Mann‐Kendall significance test and
+Theil‐Sen’s rate of change. Significant trends are identified with
+p-values of less than 0.10.</p>
+</div>
 
 
 
